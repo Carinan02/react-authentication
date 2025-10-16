@@ -15,14 +15,29 @@ export const SignUpPage = () => {
   const navigate = useNavigate();
 
   const onSignUpClicked = async () => {
-    const response = await axios.post('/api/sign-up', {
-      email: emailValue,
-      password: passwordValue,
-    });
-    const { token } = response.data;
-    setToken(token);
-    navigate('/');
-  }
+    try {
+      const response = await axios.post('/api/sign-up', {
+        email: emailValue,
+        password: passwordValue,
+      });
+
+      const { token } = response.data;
+      setToken(token);
+      navigate('/', { replace: true });
+    } catch (err) {
+      // Check if server responded with a message
+      if (err.response && err.response.data && err.response.data.message) {
+        setErrorMessage(err.response.data.message);
+      } else if (err.request) {
+        // No response received from server
+        setErrorMessage('No response from server. Please try again later.');
+      } else {
+        // Some other error occurred
+        setErrorMessage('An unexpected error occurred.');
+      }
+    }
+  };
+
 
   return (
     <div className="content-container">

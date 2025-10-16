@@ -5,9 +5,9 @@
       "email": "shaun@gmail.com",
       "passwordHash": "$2b$10$/ybf.51uIVXl.r6jhzUHueGnsEZihA/MeiH31peQsINWGKG8cAjwO",
       "info": {
-        "hairColor": "",
-        "favoriteFood": "",
-        "bio": ""
+        "hairColor": "Brown",
+        "favoriteFood": "Pizza",
+        "bio": "I like coding and also Pizza"
       },
       "isVerified": false
     },
@@ -32,6 +32,51 @@
         "bio": ""
       },
       "isVerified": false
+    },
+    {
+      "id": "879ea9f6-e9c8-450f-a525-c2d022476262",
+      "email": "nico@gmail.com",
+      "passwordHash": "$2b$10$8AYeL39Ya.Q6SBuzkTmF9.cyiqFX4DUOGOzDqW9MbOPPaMbkVNUZ2",
+      "info": {
+        "hairColor": "black",
+        "favoriteFood": "Burger",
+        "bio": "I am great"
+      },
+      "isVerified": false
+    },
+    {
+      "id": "3500db7f-6682-46c1-94ca-14c47e0fc9ae",
+      "email": "nico1@gmail.com",
+      "passwordHash": "$2b$10$P0x.MRT4IU/amGErBtf6iOLTeJjYT9R6tlkXFME8Q2/Ytj57F.9gu",
+      "info": {
+        "hairColor": "colorsdf",
+        "favoriteFood": "foodasda",
+        "bio": "biosdf"
+      },
+      "isVerified": false
+    },
+    {
+      "id": "a9977bb1-4428-417e-9a2e-7ea10085f2d2",
+      "email": "nico2@gmail.com",
+      "passwordHash": "$2b$10$E5rOsxNMjcc3mPjbZySSROwAjS7aOB9cpFFWNZxtrHLz6Z9ukQ9gq",
+      "info": {
+        "hairColor": "Brown",
+        "favoriteFood": "Broccoli",
+        "bio": "coding"
+      },
+      "isVerified": false
+    },
+    {
+      "id": "59246fbb-75ea-4a87-ab24-95dc83d11c27",
+      "email": "carinan02+test2@gmail.com",
+      "passwordHash": "$2b$10$ZHpo.jWmVPOkRWhVnsehl.julj44GdhXHOVhCADeVRB0r/wzmKxCO",
+      "info": {
+        "hairColor": "",
+        "favoriteFood": "",
+        "bio": ""
+      },
+      "isVerified": false,
+      "verificationString": "5f1d3db1-ff86-4e11-9730-fbd329a48ed5"
     }
   ]
 }

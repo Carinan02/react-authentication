@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
 const { db, saveDb } = require('./db');
+const { sendEmail } = require('./sendEmail');
 
 const app = express();
 app.use(express.json());
@@ -13,12 +14,13 @@ app.post('/api/sign-up', async (req, res) => {
   // Make sure there is no user with the email already in the database
   const matching_user = db.users.find(user => user.email === email);
   if (matching_user) {
-    return res.sendStatus(409);
+    return res.status(409).json({ message: 'Duplicate Email' });;
   }
 
   const passwordHash = await bcrypt.hash(password, 10);
-
   const id = uuidv4();
+  const verificationString = uuidv4();
+
 
   const startingInfo = {
     hairColor: '',
@@ -32,8 +34,22 @@ app.post('/api/sign-up', async (req, res) => {
     passwordHash,
     info: startingInfo,
     isVerified: false,
+    verificationString,
   })
   saveDb();
+
+  try {
+    await sendEmail({
+      to: email,
+      from: 'carinan02@gmail.com',
+      subject: 'Please verify your email',
+      text: `Thanks for signing up! To verify your email, 
+      please click here: https://opulent-computing-machine-q7qpj555j9xq29946-5173.app.github.dev/verify-email/${verificationString}`
+    })
+  } catch (error) {
+    console.log(e);
+    res.sendStatus(500)
+  }
 
   jwt.sign({
     id,
@@ -78,6 +94,52 @@ app.post('/api/log-in', async (req, res) => {
   } else {
     res.sendStatus(401);
   }
+});
+
+app.put('/api/users/:userId', (req, res) => {
+  const { authorization } = req.headers;
+  const { userId } = req.params;
+
+  if (!authorization) {
+    return res.status(401).json({ message: 'No authorization header sent' });
+  }
+
+  const user = db.users.find(user => user.id === userId);
+
+  if (!user) {
+    return res.sendStatus(404);
+  }
+
+  const token = authorization.split(' ')[1];
+
+  jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
+    if (err) return res.status(401).json({ message: 'Unable to verify token' });
+
+    const { id } = decoded;
+
+    if (id !== userId) return res.status(403).json({ message: 'Not allowed to update that userid' });
+
+    const { favoriteFood, hairColor, bio } = req.body;
+    const updates = { favoriteFood, hairColor, bio };
+
+    user.info.favoriteFood = updates.favoriteFood || user.info.favoriteFood;
+    user.info.hairColor = updates.hairColor || user.info.hairColor;
+    user.info.bio = updates.bio || user.info.bio;
+
+    saveDb();
+
+    jwt.sign({
+      ...user
+    }, process.env.JWT_SECRET, {
+      expiresIn: '2d',
+    }, (err, token) => {
+      if (err) {
+        return res.status(500).send(err);
+      }
+
+      res.json({ token });
+    })
+  })
 })
 
 app.listen(3000, () => console.log('Server running on port 3000'));

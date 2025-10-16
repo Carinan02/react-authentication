@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: '<your url here>',
+        target: 'https://opulent-computing-machine-q7qpj555j9xq29946-3000.app.github.dev/',
         changeOrigin: true,
       }
     }

@@ -1,16 +1,24 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { useUser } from './useUser';
+import { useToken } from './useToken';
 
 export const UserInfoPage = () => {
-  // We'll use the history to navigate the user
-  // programmatically later on (we're not using it yet)
-  const navigate = useNavigate();
+  const user = useUser();
+  const [token, setToken] = useToken();
+
+  const { id, email, info } = user;
 
   // These states are bound to the values of the text inputs
   // on the page (see JSX below). 
-  const [favoriteFood, setFavoriteFood] = useState('');
-  const [hairColor, setHairColor] = useState('');
-  const [bio, setBio] = useState('');
+  const [favoriteFood, setFavoriteFood] = useState(info.favoriteFood || '');
+  const [hairColor, setHairColor] = useState(info.hairColor || '');
+  const [bio, setBio] = useState(info.bio || '');
+
+  // We'll use the history to navigate the user
+  // programmatically later on (we're not using it yet)
+  const navigate = useNavigate();
 
   // These state variables control whether or not we show
   // the success and error message sections after making
@@ -31,22 +39,32 @@ export const UserInfoPage = () => {
   }, [showSuccessMessage, showErrorMessage]);
 
   const saveChanges = async () => {
-    // Send a request to the server to
-    // update the user's info with any changes we've
-    // made to the text input values
-    alert('Save functionality not implemented yet');
+    try {
+      const response = await axios.put(`/api/users/${id}`, {
+        favoriteFood,
+        hairColor,
+        bio,
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      const { token: newToken } = response.data;
+      setToken(newToken);
+      setShowSuccessMessage(true);
+    } catch (error) {
+      setShowErrorMessage(true);
+    }
   }
 
   const logOut = () => {
-    // We'll want to log the user out here
-    // and send them to the "login page"
-    alert('Log out functionality not implemented yet');
+    setToken(undefined);
+    navigate('/log-in')
   }
 
   const resetValues = () => {
-    // Reset the text input values to
-    // their starting values (the data we loaded from the server)
-    alert('Reset functionality not implemented yet');
+    setFavoriteFood(info.favoriteFood);
+    setHairColor(info.hairColor);
+    setBio(info.bio);
   }
 
   // And here we have the JSX for our component. It's pretty straightforward
