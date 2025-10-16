@@ -23,7 +23,7 @@ export const SignUpPage = () => {
 
       const { token } = response.data;
       setToken(token);
-      navigate('/', { replace: true });
+      navigate('/please-verify', { replace: true });
     } catch (err) {
       // Check if server responded with a message
       if (err.response && err.response.data && err.response.data.message) {

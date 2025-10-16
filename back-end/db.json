@@ -77,6 +77,18 @@
       },
       "isVerified": false,
       "verificationString": "5f1d3db1-ff86-4e11-9730-fbd329a48ed5"
+    },
+    {
+      "id": "29d97373-4108-4838-9df1-2dc875c098c4",
+      "email": "carinan02+test3@gmail.com",
+      "passwordHash": "$2b$10$8P80EwlBfJdrF2doSBJyk.UQ81S4qhylBrpWS.p2k9/BkRFeaFFe2",
+      "info": {
+        "hairColor": "",
+        "favoriteFood": "",
+        "bio": ""
+      },
+      "isVerified": false,
+      "verificationString": "6155b882-8f78-444f-89fe-fd43afb13a14"
     }
   ]
 }
