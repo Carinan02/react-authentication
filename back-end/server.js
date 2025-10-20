@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
 const { db, saveDb } = require('./db');
 const { sendEmail } = require('./sendEmail');
+const { getGoogleOauthUrl, getGoogleUser, updateOrCreateUserFromOauth } = require('./googleOauthUtil');
 
 const app = express();
 app.use(express.json());
@@ -86,7 +87,7 @@ app.post('/api/log-in', async (req, res) => {
       expiresIn: '2d',
     }, (err, token) => {
       if (err) {
-        return res.status(500).send(err);
+        return res.sendStatus(500);
       }
 
       res.json({ token });
@@ -115,9 +116,10 @@ app.put('/api/users/:userId', (req, res) => {
   jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
     if (err) return res.status(401).json({ message: 'Unable to verify token' });
 
-    const { id } = decoded;
+    const { id, isVerified } = decoded;
 
     if (id !== userId) return res.status(403).json({ message: 'Not allowed to update that userid' });
+    if (!isVerified) return res.status(403).json({ message: 'Email must be verified' });
 
     const { favoriteFood, hairColor, bio } = req.body;
     const updates = { favoriteFood, hairColor, bio };
@@ -142,7 +144,7 @@ app.put('/api/users/:userId', (req, res) => {
   })
 })
 
-app.put('/api/verify-email', (req, res) => {
+app.put('/api/verify-email', async (req, res) => {
   const { verificationString } = req.body;
   const user = db.users.find(user => user.verificationString === verificationString);
 
@@ -151,6 +153,7 @@ app.put('/api/verify-email', (req, res) => {
   }
 
   user.isVerified = true;
+  saveDb();
 
   const { id, email, info, isVerified } = user;
   jwt.sign({ id, email, isVerified, info }, process.env.JWT_SECRET, { expiresIn: '2d' }, (err, token) => {
@@ -161,4 +164,67 @@ app.put('/api/verify-email', (req, res) => {
     res.json({ token });
   })
 });
+
+app.put('/api/forgot-password/:email', async (req, res) => {
+  const { email } = req.params;
+  console.log(email)
+  const user = db.users.find(user => user.email === email);
+  const passwordResetCode = uuidv4();
+
+  user.passwordResetCode = passwordResetCode;
+  saveDb();
+  try {
+    await sendEmail({
+      to: email,
+      from: 'carinan02@gmail.com',
+      subject: 'Password Reset',
+      text: `
+      To Reset your password, click this link: https://opulent-computing-machine-q7qpj555j9xq29946-5173.app.github.dev/reset-password/${passwordResetCode}
+      `
+    })
+    res.sendStatus(200);
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(500);
+  }
+
+})
+
+app.put('/api/users/:passwordResetCode/reset-password', async (req, res) => {
+  const { passwordResetCode } = req.params;
+  const { newPassword } = req.body;
+
+  const user = db.users.find(user => user.passwordResetCode === passwordResetCode);
+
+  if (!user) {
+    return res.sendStatus(404);
+  }
+
+  const newPasswordHash = await bcrypt.hash(newPassword, 10);
+  user.passwordHash = newPasswordHash;
+  delete user.passwordResetCode;
+
+  saveDb();
+
+  res.sendStatus(200);
+})
+
+app.get('/api/auth/google/url', (req, res) => {
+  const url = getGoogleOauthUrl();
+  res.status(200).json({ url });
+})
+
+app.get('/auth/google/callback', async (req, res) => {
+  const { code } = req.query;
+
+  const oauthUserInfo = await getGoogleUser(code);
+  const createdUser = await updateOrCreateUserFromOauth(oauthUserInfo);
+  const { id, isVerified, email, info } = createdUser;
+
+  jwt.sign({ id, isVerified, email, info }, process.env.JWT_SECRET, (err, token) => {
+    if (err) return res.sendStatus(500);
+    res.redirect(`https://opulent-computing-machine-q7qpj555j9xq29946-5173.app.github.dev/log-in?token=${token}`);
+  })
+
+})
 app.listen(3000, () => console.log('Server running on port 3000'));

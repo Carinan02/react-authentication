@@ -88,7 +88,50 @@
         "bio": ""
       },
       "isVerified": false,
-      "verificationString": "6155b882-8f78-444f-89fe-fd43afb13a14"
+      "verificationString": "6155b882-8f78-444f-89fe-fd43afb13a14",
+      "passwordResetCode": "ce500b06-d852-48f8-9834-711efd0cdffc"
+    },
+    {
+      "id": "8ad1cb05-18fe-47fd-8169-b35468cd329e",
+      "email": "carinan02+test4@gmail.com",
+      "passwordHash": "$2b$10$rDGCigflvOQcsqvPhILh9uRCoo7N88UWUEQlHKyhXKEJbw9FiE4g.",
+      "info": {
+        "hairColor": "",
+        "favoriteFood": "",
+        "bio": ""
+      },
+      "isVerified": true,
+      "verificationString": "75e02cf5-e656-45ba-80b2-d01a77092861"
+    },
+    {
+      "email": "carinan02@gmail.com",
+      "googleId": "116954180565857819509",
+      "isVerified": true,
+      "info": {}
+    },
+    {
+      "id": "dedc0c1e-9dc0-432c-b134-8afa4cb4723c",
+      "email": "carinan02+test5@gmail.com",
+      "passwordHash": "$2b$10$5QTuPBxeIgFqhmoDFHzM/utSyOAx29Udlu05YPLjZwKy5qzxqdKf.",
+      "info": {
+        "hairColor": "",
+        "favoriteFood": "",
+        "bio": ""
+      },
+      "isVerified": false,
+      "verificationString": "341b8304-02ec-4073-b459-39ae2ac0af7e"
+    },
+    {
+      "id": "37407888-c8a2-4bb8-a8d8-bff6934172fa",
+      "email": "carinan02+test7@gmail.com",
+      "passwordHash": "$2b$10$VVFIVW8okHbjYQwmCFWSLeR91rbR8tKPlr1GtxdIpKwk7qUOdyhmi",
+      "info": {
+        "hairColor": "",
+        "favoriteFood": "",
+        "bio": ""
+      },
+      "isVerified": false,
+      "verificationString": "521028d7-35f9-46e6-a5ec-094ad55efaca"
     }
   ]
 }
